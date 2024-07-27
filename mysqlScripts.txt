@@ -1,0 +1,89 @@
+/* 
+    dBeaver mySQL scripts for BeSpoked Bikes
+*/
+
+
+CREATE DATABASE BeSpokedDB;
+USE BeSpokedDB;
+
+/***********************************************************************/
+
+CREATE TABLE SalesEmployees (
+  empid INT NOT NULL AUTO_INCREMENT,
+  Fname VARCHAR(65) NOT NULL,
+  Lname VARCHAR(65) NOT NULL,
+  address VARCHAR(100) NOT NULL,
+  phone VARCHAR(25),
+  StartDate DATE,
+  TerminationDate DATE,
+  Manager VARCHAR(65) NOT NULL,
+  PRIMARY KEY (empid)
+);
+
+/***********************************************************************/
+
+CREATE TABLE Products (
+  prodid INT NOT NULL AUTO_INCREMENT,
+  name VARCHAR(65) NOT NULL,
+  manufacturer VARCHAR(65) NOT NULL,
+  prodStyle VARCHAR(65) NOT NULL,
+  purchasePrice DECIMAL(7,2),
+  salePrice DECIMAL(7,2),
+  QtyOnHand INT,
+  commissionPercentage DECIMAL(5,2) DEFAULT 5.00,
+  PRIMARY KEY (prodid)
+);
+
+/***********************************************************************/ 
+
+CREATE TABLE Customers (
+  custid INT NOT NULL AUTO_INCREMENT,
+  Fname VARCHAR(65) NOT NULL,
+  Lname VARCHAR(65) NOT NULL,
+  address VARCHAR(100) NOT NULL,
+  phone VARCHAR(25),
+  StartDate DATE,
+  PRIMARY KEY (custid)
+);
+
+/***********************************************************************/ 
+
+CREATE TABLE Sales (
+  saleid INT NOT NULL AUTO_INCREMENT,
+  prodid INT NOT NULL,
+  empid INT NOT NULL,
+  custid INT NOT NULL,
+  saleDate DATE,
+  salePrice DECIMAL(7,2),
+  discountApplied DECIMAL(7,2) DEFAULT 0.00,
+  finalPrice DECIMAL(7,2),
+  PRIMARY KEY (saleid),
+  FOREIGN KEY (prodid) REFERENCES Products(prodid),
+  FOREIGN KEY (empid) REFERENCES SalesEmployees(empid),
+  FOREIGN KEY (custid) REFERENCES Customers(custid)
+);
+
+/***********************************************************************/ 
+
+CREATE TABLE Discounts (
+  discid INT NOT NULL AUTO_INCREMENT,
+  prodid INT NOT NULL,
+  beginDate DATE,
+  endDate DATE,
+  discountPercentage DECIMAL(5,2),
+  PRIMARY KEY (discid),
+  FOREIGN KEY (prodid) REFERENCES Products(prodid)
+);
+
+/***********************************************************************/ 
+
+CREATE TABLE QuarterlyBonuses (
+  bonusid INT NOT NULL AUTO_INCREMENT,
+  empid INT NOT NULL,
+  year INT NOT NULL,
+  quarter INT NOT NULL,
+  totalSales DECIMAL(10,2),
+  bonusAmount DECIMAL(7,2),
+  PRIMARY KEY (bonusid),
+  FOREIGN KEY (empid) REFERENCES SalesEmployees(empid)
+);
