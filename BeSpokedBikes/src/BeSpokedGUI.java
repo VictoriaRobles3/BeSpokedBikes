@@ -25,6 +25,15 @@ public class BeSpokedGUI extends JFrame{
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
+        //Title
+        JLabel titleLabel = new JLabel("BeSpoked Bikes");
+        titleLabel.setFont(new Font("Monospaced", Font.BOLD, 40));
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        mainPanel.add(titleLabel);
+
+        //space
+        mainPanel.add(Box.createVerticalStrut(30));
+
         //initialize buttons
         salesEmployeesButton = new JButton("Sales Employees");
         customersButton = new JButton("Customers");
