@@ -80,3 +80,13 @@ WHERE empid = 3;
 
 INSERT INTO Sales (prodid, empid, custid, saleDate, salePrice, discountApplied, finalPrice) VALUES
 (7, 2, 3, '2003-03-13', 1389.99, 0.00, 1389.99);
+
+INSERT INTO Sales (prodid, empid, custid, saleDate, salePrice, discountApplied, finalPrice) VALUES
+(4, 1, 2, '2015-02-03', 1399.99, 0.00, 1399.99);
+
+/*Delete sale due to price discrepancy, delete same sale from QuarterlyBonuses table*/
+DELETE FROM Sales
+WHERE saleid = 4;
+
+DELETE FROM QuarterlyBonuses
+WHERE bonusid = 4;
