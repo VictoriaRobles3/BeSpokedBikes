@@ -20,7 +20,7 @@ public class test {
 
             // Establish database connection
             connection = DriverManager.getConnection(url, user, password);
-            System.out.println("Connected to the database successfully.");
+            //System.out.println("Connected to the database successfully.");
         } catch (ClassNotFoundException e) {
             System.out.println("MySQL JDBC driver not found.");
             e.printStackTrace();
@@ -99,6 +99,38 @@ public class test {
     }
 
     private void getProducts(){
+        String sqlCommand = "SELECT name, manufacturer, prodStyle, purchasePrice, salePrice, QtyOnHand, commissionPercentage " +
+                            "FROM Products";
+
+        try(Statement myStmt = connection.createStatement();
+            ResultSet myRS = myStmt.executeQuery(sqlCommand)){
+
+            System.out.println("\nPRODUCTS LIST\n");
+            System.out.println("Name\t\tManufacturer\tStyle\t\tPurchase Price\t\tSale Price\tQuantity\tCommission Percentage");
+            System.out.println("----------\t-----------\t------------\t-------------\t\t----------\t--------\t---------------------");
+
+            while (myRS.next()) {
+                String name = myRS.getString("name");
+                String manufacturer = myRS.getString("manufacturer");
+                String prodStyle = myRS.getString("prodStyle");
+                Double purchasePrice = myRS.getDouble("purchasePrice");
+                Double salePrice = myRS.getDouble("salePrice");
+                int qtyOnHand = myRS.getInt("QtyOnHand");
+                Double commissionPercentage = myRS.getDouble("commissionPercentage");
+
+                System.out.printf("%-15s\t%-15s\t%-10s\t$%-13.2f\t\t$%-10.2f\t%-8d\t%.2f%%\n",
+                name,
+                manufacturer,
+                prodStyle,
+                purchasePrice,
+                salePrice,
+                qtyOnHand,
+                commissionPercentage
+                );
+            }
+        } catch (SQLException e){
+            System.out.println("ERROR: " + e.getLocalizedMessage());
+        }
 
     }
 
@@ -109,6 +141,7 @@ public class test {
     public static void main(String[] args) {
         test ex = new test();
        // ex.getSalesEmployees();
-       ex.getCustomers();
+      // ex.getCustomers();
+      ex.getProducts();
     }
 }
