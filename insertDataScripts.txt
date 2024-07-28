@@ -68,3 +68,10 @@ USE BeSpokedDB;
 UPDATE SalesEmployees
 SET TerminationDate = '2024-01-01'
 WHERE empid = 5;
+
+/*Fixed logic of Hire date for employee id 3*/
+USE BeSpokedDB;
+
+UPDATE SalesEmployees
+SET StartDate = '2001-03-03'
+WHERE empid = 3;
