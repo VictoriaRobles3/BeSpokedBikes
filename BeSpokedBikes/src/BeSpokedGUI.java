@@ -17,6 +17,7 @@ public class BeSpokedGUI extends JFrame{
     public BeSpokedGUI(){
         components();
         dbConnection();
+        actionButtons();
     }
     
     private void components() {
@@ -90,6 +91,19 @@ public class BeSpokedGUI extends JFrame{
         } catch (SQLException e) {
             resultArea.setText("Failed to connect to the database. Error: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    private void actionButtons(){
+        salesEmployeesButton.addActionListener(e -> displaySalesEmployeesWindow());
+    }
+
+    private void displaySalesEmployeesWindow(){
+        if(connection != null){
+            SwingUtilities.invokeLater(() -> new SalesEmployees(connection).setVisible(true));
+        }
+        else{
+            JOptionPane.showMessageDialog(this, "Connection is not established.");
         }
     }
 
