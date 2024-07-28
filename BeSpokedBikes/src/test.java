@@ -135,6 +135,41 @@ public class test {
     }
 
     private void getSales(){
+        String sqlCommand = "SELECT p.name, s.salePrice, s.saleDate, e.Fname AS empFname, e.Lname AS empLname, " +
+                            "c.Fname AS custFname, c.Lname AS custLname, p.commissionPercentage " +
+                            "FROM Sales s " + "JOIN Products p ON s.prodid = p.prodid "+
+                            "JOIN SalesEmployees e ON s.empid = e.empid " +
+                            "JOIN Customers c ON s.custid = c.custid";
+
+        try(Statement myStmt = connection.createStatement();
+            ResultSet myRS = myStmt.executeQuery(sqlCommand)){
+
+            System.out.println("\nSALES LIST\n");
+            System.out.println("Product Name\tCustomer Name\tSale Date\tSale Price\tSales Employee\t\tEmployee Commission");
+            System.out.println("------------\t-------------\t---------\t----------\t--------------\t\t-------------------");
+
+            while (myRS.next()) {
+                String ProductName = myRS.getString("name");
+                Double salePrice = myRS.getDouble("salePrice");
+                LocalDate saleDate = myRS.getDate("saleDate").toLocalDate();
+                String employeeFirstName = myRS.getString("empFname");
+                String employeeLastName = myRS.getString("empLname");
+                String customerFirstName = myRS.getString("custFname");
+                String customerLastName = myRS.getString("custLname");
+                Double commission = myRS.getDouble("commissionPercentage");
+
+                System.out.printf("%-12s\t%-13s\t%-10s\t$%-9.2f\t%-20s\t$%.2f\n",
+                ProductName,
+                customerFirstName + " " + customerLastName,
+                saleDate,
+                salePrice,
+                employeeFirstName + " " + employeeLastName,
+                commission
+                );
+            }
+        } catch (SQLException e){
+            System.out.println("ERROR: " + e.getLocalizedMessage());
+        }
 
     }
 
@@ -142,6 +177,7 @@ public class test {
         test ex = new test();
        // ex.getSalesEmployees();
       // ex.getCustomers();
-      ex.getProducts();
+      //ex.getProducts();
+        ex.getSales();
     }
 }
