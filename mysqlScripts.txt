@@ -194,3 +194,74 @@ BEGIN
 END //
 
 DELIMITER ;
+
+/***********************************************************************/
+/***********************************************************************/
+/***********************************************************************/ 
+
+/* 
+  Adding new column 'totalQtrCommission' in the QuarterlyBonuses Table
+*/
+
+ALTER TABLE QuarterlyBonuses
+ADD COLUMN totalQtrCommission DECIMAL(10,2) AFTER bonusAmount;
+
+UPDATE QuarterlyBonuses qb
+JOIN (
+    SELECT empid, YEAR(saleDate) AS year, QUARTER(saleDate) AS quarter, SUM(commission) AS totalQtrCommission
+    FROM Sales
+    GROUP BY empid, YEAR(saleDate), QUARTER(saleDate)
+) s
+ON qb.empid = s.empid AND qb.year = s.year AND qb.quarter = s.quarter
+SET qb.totalQtrCommission = s.totalQtrCommission;
+
+/*Modify the current trigger after_sale_insert*/
+
+USE BeSpokedDB;
+
+DELIMITER //
+
+DROP TRIGGER IF EXISTS after_sale_insert //
+
+CREATE TRIGGER after_sale_insert
+AFTER INSERT ON Sales
+FOR EACH ROW
+BEGIN
+    DECLARE quarter_num INT;
+    DECLARE year_num INT;
+    DECLARE total_sales DECIMAL(10,2);
+    DECLARE bonus_amount DECIMAL(7,2);
+    DECLARE total_commission DECIMAL(10,2);
+
+    SET quarter_num = QUARTER(NEW.saleDate);
+    SET year_num = YEAR(NEW.saleDate);
+
+    SELECT COALESCE(SUM(finalPrice), 0)
+    INTO total_sales
+    FROM Sales
+    WHERE empid = NEW.empid
+    AND YEAR(saleDate) = year_num
+    AND QUARTER(saleDate) = quarter_num;
+
+    SELECT COALESCE(SUM(commission), 0)
+    INTO total_commission
+    FROM Sales
+    WHERE empid = NEW.empid
+    AND YEAR(saleDate) = year_num
+    AND QUARTER(saleDate) = quarter_num;
+
+    SET bonus_amount = total_sales * 0.25;
+
+    INSERT INTO QuarterlyBonuses (empid, year, quarter, totalSales, bonusAmount, totalQtrCommission)
+    VALUES (NEW.empid, year_num, quarter_num, total_sales, bonus_amount, total_commission)
+    ON DUPLICATE KEY UPDATE
+        totalSales = total_sales,
+        bonusAmount = bonus_amount,
+        totalQtrCommission = total_commission;
+END //
+
+DELIMITER ;
+
+/***********************************************************************/
+/***********************************************************************/
+/***********************************************************************/ 
