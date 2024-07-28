@@ -43,3 +43,28 @@ INSERT INTO Products (name, manufacturer, prodStyle, purchasePrice, salePrice, Q
 
 INSERT INTO Products (name, manufacturer, prodStyle, purchasePrice, salePrice, QtyOnHand) VALUES
 ('Mountain Explorer', 'TrailBlaze', 'Mountain', 1000.00, 1389.99, 2);
+
+/***********************************************************************/
+
+/*Transfer current data in Sales Table to QuarterlyBonuses Table testing the delimiter */
+
+INSERT INTO QuarterlyBonuses (empid, year, quarter, totalSales, bonusAmount)
+SELECT 
+    empid, 
+    YEAR(saleDate) as year, 
+    QUARTER(saleDate) as quarter, 
+    SUM(finalPrice) as totalSales,
+    SUM(finalPrice) * 0.25 as bonusAmount
+FROM Sales
+GROUP BY empid, YEAR(saleDate), QUARTER(saleDate)
+ON DUPLICATE KEY UPDATE
+    totalSales = VALUES(totalSales),
+    bonusAmount = VALUES(bonusAmount);
+
+/*Fixed logic of termination date for employee id 5*/
+
+USE BeSpokedDB;
+
+UPDATE SalesEmployees
+SET TerminationDate = '2024-01-01'
+WHERE empid = 5;
