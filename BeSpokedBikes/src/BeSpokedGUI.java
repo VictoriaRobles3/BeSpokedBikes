@@ -96,11 +96,21 @@ public class BeSpokedGUI extends JFrame{
 
     private void actionButtons(){
         salesEmployeesButton.addActionListener(e -> displaySalesEmployeesWindow());
+        customersButton.addActionListener(e -> displayCustomersWindow());
     }
 
     private void displaySalesEmployeesWindow(){
         if(connection != null){
             SwingUtilities.invokeLater(() -> new SalesEmployees(connection).setVisible(true));
+        }
+        else{
+            JOptionPane.showMessageDialog(this, "Connection is not established.");
+        }
+    }
+
+    private void displayCustomersWindow(){
+        if(connection != null){
+            SwingUtilities.invokeLater(() -> new Customers(connection).setVisible(true));
         }
         else{
             JOptionPane.showMessageDialog(this, "Connection is not established.");
@@ -113,7 +123,7 @@ public class BeSpokedGUI extends JFrame{
                 BeSpokedGUI frame = new BeSpokedGUI();
                 frame.setTitle("BeSpoked Bikes");
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                frame.pack();
+                frame.setSize(1600, 600);
                 frame.setVisible(true);
             }
         });
