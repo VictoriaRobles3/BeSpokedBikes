@@ -3,19 +3,42 @@ import java.time.*;
 //test get Sales Employees
 //needs modification
 public class test {
-    public static void main(String[] args) {
-        String url = "jdbc:mysql://localhost:3306/BeSpokedDB";
-        String user = "root";
-        String password = "";
+    private Connection connection;
 
-        try (Connection myConn = DriverManager.getConnection(url, user, password)) {
-            String sqlCommand = "SELECT Fname, Lname, address, phone, StartDate, TerminationDate, Manager " +
-                                "FROM SalesEmployees";
+    public test(){
+        dbConnection();
+    }
 
-            Statement myStmt = myConn.createStatement();
-            ResultSet myRS = myStmt.executeQuery(sqlCommand);
+    private void dbConnection(){
+        try {
+            String url = "jdbc:mysql://localhost:3306/BeSpokedDB";
+            String user = "root";
+            String password = "";
 
-            System.out.println("\nEMPLOYEE LIST\n");
+            // check if the JDBC driver is loaded, needs to be added to the Libraries section VS code
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            // Establish database connection
+            connection = DriverManager.getConnection(url, user, password);
+            System.out.println("Connected to the database successfully.");
+        } catch (ClassNotFoundException e) {
+            System.out.println("MySQL JDBC driver not found.");
+            e.printStackTrace();
+        } catch (SQLException e) {
+            System.out.println("Failed to connect to the database. Error: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void getSalesEmployees(){
+        
+        String sqlCommand = "SELECT Fname, Lname, address, phone, StartDate, TerminationDate, Manager " +
+                            "FROM SalesEmployees";
+
+        try(Statement myStmt = connection.createStatement();
+            ResultSet myRS = myStmt.executeQuery(sqlCommand)){
+
+            System.out.println("\nSALES EMPLOYEE LIST\n");
             System.out.println("First Name\tLast Name\tAddress\t\t\t\tPhone\t\tStart Date\tTermination Date\tManager");
             System.out.println("----------\t---------\t-------\t\t\t\t------\t\t----------\t----------------\t--------");
 
@@ -38,8 +61,13 @@ public class test {
                 (TerminationDate != null ? TerminationDate : "N/A"),
                 manager);
             }
-        } catch (SQLException e) {
+        } catch (SQLException e){
             System.out.println("ERROR: " + e.getLocalizedMessage());
         }
+    }
+
+    public static void main(String[] args) {
+        test ex = new test();
+        ex.getSalesEmployees();
     }
 }
