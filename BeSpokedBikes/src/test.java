@@ -173,11 +173,50 @@ public class test {
 
     }
 
+    private void getQuarterlyReport(){
+        String sqlCommand = "SELECT q.year, q.quarter, q.totalSales, q.bonusAmount, q.totalQtrCommission, " +
+                            "e.Fname AS empFname, e.Lname AS empLname " + 
+                            "FROM QuarterlyBonuses q " +
+                            "JOIN SalesEmployees e ON q.empid = e.empid " + 
+                            "ORDER BY q.year DESC, q.quarter DESC";
+
+        try(Statement myStmt = connection.createStatement();
+            ResultSet myRS = myStmt.executeQuery(sqlCommand)){
+
+            System.out.println("\nQUARTERLY REPORT\n");
+            System.out.println("Sales Employee Name\tYear\tQuarter\tTotal Quarter Sales\t Bonus Amount\tTotal Quarter Commission");
+            System.out.println("--------------------\t-----\t-------\t-------------------\t-------------\t------------------------");
+
+            while (myRS.next()) {
+                String empFirstName = myRS.getString("empFname");
+                String empLastName = myRS.getString("empLname");
+                int year = myRS.getInt("year");
+                int quarter = myRS.getInt("quarter");
+                Double totalQtrSales = myRS.getDouble("totalSales");
+                Double bonusAmount = myRS.getDouble("bonusAmount");
+                Double qtrCommission = myRS.getDouble("totalQtrCommission");
+
+                System.out.printf("%-20s\t%4d\t%2d\t$%-15.2f\t$%8.2f\t$%8.2f\n",
+                empFirstName + " " + empLastName,
+                year,
+                quarter,
+                totalQtrSales,
+                bonusAmount,
+                qtrCommission
+                );
+            }
+        } catch (SQLException e){
+            System.out.println("ERROR: " + e.getLocalizedMessage());
+        }
+
+    }
+
     public static void main(String[] args) {
         test ex = new test();
-        ex.getSalesEmployees();
-        ex.getCustomers();
-        ex.getProducts();
-        ex.getSales();
+     //   ex.getSalesEmployees();
+       // ex.getCustomers();
+       // ex.getProducts();
+       // ex.getSales();
+       ex.getQuarterlyReport();
     }
 }
