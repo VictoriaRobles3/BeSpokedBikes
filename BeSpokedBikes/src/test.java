@@ -139,14 +139,15 @@ public class test {
                             "c.Fname AS custFname, c.Lname AS custLname, p.commissionPercentage " +
                             "FROM Sales s " + "JOIN Products p ON s.prodid = p.prodid "+
                             "JOIN SalesEmployees e ON s.empid = e.empid " +
-                            "JOIN Customers c ON s.custid = c.custid";
+                            "JOIN Customers c ON s.custid = c.custid " +
+                            "ORDER BY s.saleDate DESC";
 
         try(Statement myStmt = connection.createStatement();
             ResultSet myRS = myStmt.executeQuery(sqlCommand)){
 
             System.out.println("\nSALES LIST\n");
-            System.out.println("Product Name\tCustomer Name\tSale Date\tSale Price\tSales Employee\t\tEmployee Commission");
-            System.out.println("------------\t-------------\t---------\t----------\t--------------\t\t-------------------");
+            System.out.println("Product Name\t\tCustomer Name\tSale Date\tSale Price\tSales Employee\t\tEmployee Commission");
+            System.out.println("------------\t\t-------------\t---------\t----------\t--------------\t\t-------------------");
 
             while (myRS.next()) {
                 String ProductName = myRS.getString("name");
@@ -158,7 +159,7 @@ public class test {
                 String customerLastName = myRS.getString("custLname");
                 Double commission = myRS.getDouble("commissionPercentage");
 
-                System.out.printf("%-12s\t%-13s\t%-10s\t$%-9.2f\t%-20s\t$%.2f\n",
+                System.out.printf("%-20s\t%-10s\t%-10s\t$%-9.2f\t%-20s\t$%.2f\n",
                 ProductName,
                 customerFirstName + " " + customerLastName,
                 saleDate,
@@ -216,7 +217,7 @@ public class test {
      //   ex.getSalesEmployees();
        // ex.getCustomers();
        // ex.getProducts();
-       // ex.getSales();
-       ex.getQuarterlyReport();
+        ex.getSales();
+       //ex.getQuarterlyReport();
     }
 }
