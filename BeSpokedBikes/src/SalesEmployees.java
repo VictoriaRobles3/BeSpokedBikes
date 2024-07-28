@@ -13,7 +13,7 @@ public class SalesEmployees extends JFrame {
 
     private void start(){
         setTitle("SALES EMPLOYEES");
-        setSize(800,600);
+        setSize(1600,600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         JTextArea resultArea = new JTextArea();
