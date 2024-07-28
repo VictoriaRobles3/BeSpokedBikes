@@ -40,7 +40,7 @@ public class test {
 
             System.out.println("\nSALES EMPLOYEE LIST\n");
             System.out.println("First Name\tLast Name\tAddress\t\t\t\tPhone\t\tStart Date\tTermination Date\tManager");
-            System.out.println("----------\t---------\t-------\t\t\t\t------\t\t----------\t----------------\t--------");
+            System.out.println("----------\t---------\t--------------------------\t------------\t----------\t----------------\t----------------");
 
             while (myRS.next()) {
                 String firstName = myRS.getString("Fname");
@@ -106,8 +106,8 @@ public class test {
             ResultSet myRS = myStmt.executeQuery(sqlCommand)){
 
             System.out.println("\nPRODUCTS LIST\n");
-            System.out.println("Name\t\tManufacturer\tStyle\t\tPurchase Price\t\tSale Price\tQuantity\tCommission Percentage");
-            System.out.println("----------\t-----------\t------------\t-------------\t\t----------\t--------\t---------------------");
+            System.out.println("Name\t\t\tManufacturer\tStyle\t\tPurchase Price\t\tSale Price\tQuantity\tCommission Percentage");
+            System.out.println("-------------\t\t-----------\t------------\t-------------\t\t----------\t--------\t---------------------");
 
             while (myRS.next()) {
                 String name = myRS.getString("name");
@@ -118,7 +118,7 @@ public class test {
                 int qtyOnHand = myRS.getInt("QtyOnHand");
                 Double commissionPercentage = myRS.getDouble("commissionPercentage");
 
-                System.out.printf("%-15s\t%-15s\t%-10s\t$%-13.2f\t\t$%-10.2f\t%-8d\t%.2f%%\n",
+                System.out.printf("%-16s\t%-15s\t%-10s\t$%-13.2f\t\t$%-10.2f\t%-8d\t%.2f%%\n",
                 name,
                 manufacturer,
                 prodStyle,
@@ -175,9 +175,9 @@ public class test {
 
     public static void main(String[] args) {
         test ex = new test();
-       // ex.getSalesEmployees();
-      // ex.getCustomers();
-      //ex.getProducts();
+        ex.getSalesEmployees();
+        ex.getCustomers();
+        ex.getProducts();
         ex.getSales();
     }
 }
