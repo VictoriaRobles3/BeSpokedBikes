@@ -165,3 +165,32 @@ DELIMITER ;
 USE BeSpokedDB;
 ALTER TABLE QuarterlyBonuses
 ADD UNIQUE KEY unique_bonus (empid, year, quarter);
+
+/***********************************************************************/
+/***********************************************************************/
+/***********************************************************************/ 
+
+/* 
+    Adding new column 'commission' in the Sales Table
+*/
+
+USE BeSpokedDB;
+
+ALTER TABLE Sales
+ADD COLUMN commission DECIMAL(7,2) AFTER finalPrice;
+
+UPDATE Sales
+SET commission = finalPrice * 0.05;
+
+/* New delimiter for commission in Sales Table(Same as delimiter in Products Table) */
+
+DELIMITER //
+
+CREATE TRIGGER before_sale_insert
+BEFORE INSERT ON Sales
+FOR EACH ROW
+BEGIN
+    SET NEW.commission = NEW.finalPrice * 0.05;
+END //
+
+DELIMITER ;
