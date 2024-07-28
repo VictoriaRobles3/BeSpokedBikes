@@ -123,3 +123,45 @@ BEGIN
 END//
 
 DELIMITER ;
+
+
+/*
+Delimiter for QuarterlyBonuses Table
+*/
+
+USE BeSpokedDB;
+
+DELIMITER //
+
+CREATE TRIGGER after_sale_insert
+AFTER INSERT ON Sales
+FOR EACH ROW
+BEGIN
+	DECLARE quarter_num INT;
+	DECLARE year_num INT;
+	DECLARE total_sales DECIMAL(10,2);
+	DECLARE bonus_amount DECIMAL(7,2);
+
+	SET quarter_num = QUARTER(NEW.saleDate);
+	SET year_num = YEAR(NEW.saleDate);
+
+	SELECT COALESCE(SUM(finalPrice), 0)
+	INTO total_sales
+		FROM Sales
+		WHERE empid = NEW.empid
+		AND YEAR(saleDate) = year_num
+		AND QUARTER(saleDate) = quarter_num;
+	SET bonus_amount = total_sales * 0.25;
+
+	INSERT INTO QuarterlyBonuses (empid, year, quarter, totalSales, bonusAmount)
+	VALUES (NEW.empid, year_num, quarter_num, total_sales, bonus_amount)
+	ON DUPLICATE KEY UPDATE
+		totalSales = total_sales,
+		bonusAmount = bonus_amount;
+END //
+
+DELIMITER ;
+
+USE BeSpokedDB;
+ALTER TABLE QuarterlyBonuses
+ADD UNIQUE KEY unique_bonus (empid, year, quarter);
