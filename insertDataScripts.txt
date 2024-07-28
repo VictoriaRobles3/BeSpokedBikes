@@ -32,3 +32,14 @@ INSERT INTO Sales (prodid, empid, custid, saleDate, salePrice, discountApplied, 
 (3, 3, 3, '2002-01-05', 1299.99, 0.00, 1299.99),
 (4, 4, 4, '2023-07-10', 299.99, 0.00, 299.99),
 (5, 1, 5, '2023-05-15', 899.99, 0.00, 899.99);
+
+/***********************************************************************/
+/* Script to test Products table updated script for commissionPercentage and delimiter */
+
+USE BeSpokedDB;
+
+INSERT INTO Products (name, manufacturer, prodStyle, purchasePrice, salePrice, QtyOnHand) VALUES
+('Roadmaster', 'SpeedCycle', 'Road', 800.00, 1299.99, 12);
+
+INSERT INTO Products (name, manufacturer, prodStyle, purchasePrice, salePrice, QtyOnHand) VALUES
+('Mountain Explorer', 'TrailBlaze', 'Mountain', 1000.00, 1389.99, 2);
