@@ -75,3 +75,8 @@ USE BeSpokedDB;
 UPDATE SalesEmployees
 SET StartDate = '2001-03-03'
 WHERE empid = 3;
+
+/*Test delimiter in Sales Table for commission */
+
+INSERT INTO Sales (prodid, empid, custid, saleDate, salePrice, discountApplied, finalPrice) VALUES
+(7, 2, 3, '2003-03-13', 1389.99, 0.00, 1389.99);
