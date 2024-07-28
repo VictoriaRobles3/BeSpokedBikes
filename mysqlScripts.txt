@@ -2,7 +2,6 @@
     dBeaver mySQL scripts for BeSpoked Bikes
 */
 
-
 CREATE DATABASE BeSpokedDB;
 USE BeSpokedDB;
 
@@ -87,3 +86,40 @@ CREATE TABLE QuarterlyBonuses (
   PRIMARY KEY (bonusid),
   FOREIGN KEY (empid) REFERENCES SalesEmployees(empid)
 );
+
+
+/***********************************************************************/
+/***********************************************************************/
+/***********************************************************************/ 
+
+/* 
+    to fix oversight of the commissionPercentage in the Products table
+*/
+
+USE BeSpokedDB;
+
+ALTER TABLE Products
+MODIFY COLUMN commissionPercentage DECIMAL(7,2);
+
+UPDATE Products
+SET commissionPercentage = salePrice * 0.05;
+
+/***********************************************************************/
+/***********************************************************************/
+/***********************************************************************/ 
+
+/* 
+    ADDING DELIMITERS
+*/
+
+USE BeSpokedDB;
+
+DELIMITER //
+CREATE TRIGGER before_prod_insert
+BEFORE INSERT ON Products
+FOR EACH ROW
+BEGIN
+	SET NEW.commissionPercentage = NEW.salePrice * 0.05;
+END//
+
+DELIMITER ;
