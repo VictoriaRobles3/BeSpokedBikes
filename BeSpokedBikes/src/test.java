@@ -66,8 +66,49 @@ public class test {
         }
     }
 
+    private void getCustomers(){
+
+        String sqlCommand = "SELECT Fname, Lname, address, phone, StartDate " +
+                            "FROM Customers";
+
+        try(Statement myStmt = connection.createStatement();
+            ResultSet myRS = myStmt.executeQuery(sqlCommand)){
+
+            System.out.println("\nCUSTOMER LIST\n");
+            System.out.println("First Name\tLast Name\tAddress\t\t\t\t\tPhone\t\tStart Date");
+            System.out.println("----------\t---------\t-----------------------------\t\t-------------\t----------");
+
+            while (myRS.next()) {
+                String firstName = myRS.getString("Fname");
+                String lastName = myRS.getString("Lname");
+                String address = myRS.getString("address");
+                String phone = myRS.getString("phone");
+                LocalDate StartDate = myRS.getDate("StartDate").toLocalDate();
+
+                System.out.printf("%-10s\t%-10s\t%-32s\t%-10s\t%-15s\n",
+                firstName,
+                lastName,
+                address,
+                phone,
+                StartDate);
+            }
+        } catch (SQLException e){
+            System.out.println("ERROR: " + e.getLocalizedMessage());
+        }
+
+    }
+
+    private void getProducts(){
+
+    }
+
+    private void getSales(){
+
+    }
+
     public static void main(String[] args) {
         test ex = new test();
-        ex.getSalesEmployees();
+       // ex.getSalesEmployees();
+       ex.getCustomers();
     }
 }
