@@ -2,7 +2,6 @@
     dBeaver mySQL scripts for BeSpoked Bikes
 */
 
-
 CREATE DATABASE BeSpokedDB;
 USE BeSpokedDB;
 
@@ -87,3 +86,192 @@ CREATE TABLE QuarterlyBonuses (
   PRIMARY KEY (bonusid),
   FOREIGN KEY (empid) REFERENCES SalesEmployees(empid)
 );
+
+
+/***********************************************************************/
+/***********************************************************************/
+/***********************************************************************/ 
+
+/* 
+    to fix oversight of the commissionPercentage in the Products table
+*/
+
+USE BeSpokedDB;
+
+ALTER TABLE Products
+MODIFY COLUMN commissionPercentage DECIMAL(7,2);
+
+UPDATE Products
+SET commissionPercentage = salePrice * 0.05;
+
+/***********************************************************************/
+/***********************************************************************/
+/***********************************************************************/ 
+
+/* 
+    ADDING DELIMITERS
+*/
+
+USE BeSpokedDB;
+
+DELIMITER //
+CREATE TRIGGER before_prod_insert
+BEFORE INSERT ON Products
+FOR EACH ROW
+BEGIN
+	SET NEW.commissionPercentage = NEW.salePrice * 0.05;
+END//
+
+DELIMITER ;
+
+
+/*
+Delimiter for QuarterlyBonuses Table
+*/
+
+USE BeSpokedDB;
+
+DELIMITER //
+
+CREATE TRIGGER after_sale_insert
+AFTER INSERT ON Sales
+FOR EACH ROW
+BEGIN
+	DECLARE quarter_num INT;
+	DECLARE year_num INT;
+	DECLARE total_sales DECIMAL(10,2);
+	DECLARE bonus_amount DECIMAL(7,2);
+
+	SET quarter_num = QUARTER(NEW.saleDate);
+	SET year_num = YEAR(NEW.saleDate);
+
+	SELECT COALESCE(SUM(finalPrice), 0)
+	INTO total_sales
+		FROM Sales
+		WHERE empid = NEW.empid
+		AND YEAR(saleDate) = year_num
+		AND QUARTER(saleDate) = quarter_num;
+	SET bonus_amount = total_sales * 0.25;
+
+	INSERT INTO QuarterlyBonuses (empid, year, quarter, totalSales, bonusAmount)
+	VALUES (NEW.empid, year_num, quarter_num, total_sales, bonus_amount)
+	ON DUPLICATE KEY UPDATE
+		totalSales = total_sales,
+		bonusAmount = bonus_amount;
+END //
+
+DELIMITER ;
+
+USE BeSpokedDB;
+ALTER TABLE QuarterlyBonuses
+ADD UNIQUE KEY unique_bonus (empid, year, quarter);
+
+/***********************************************************************/
+/***********************************************************************/
+/***********************************************************************/ 
+
+/* 
+    Adding new column 'commission' in the Sales Table
+*/
+
+USE BeSpokedDB;
+
+ALTER TABLE Sales
+ADD COLUMN commission DECIMAL(7,2) AFTER finalPrice;
+
+UPDATE Sales
+SET commission = finalPrice * 0.05;
+
+/* New delimiter for commission in Sales Table(Same as delimiter in Products Table) */
+
+DELIMITER //
+
+CREATE TRIGGER before_sale_insert
+BEFORE INSERT ON Sales
+FOR EACH ROW
+BEGIN
+    SET NEW.commission = NEW.finalPrice * 0.05;
+END //
+
+DELIMITER ;
+
+/***********************************************************************/
+/***********************************************************************/
+/***********************************************************************/ 
+
+/* 
+  Adding new column 'totalQtrCommission' in the QuarterlyBonuses Table
+*/
+
+ALTER TABLE QuarterlyBonuses
+ADD COLUMN totalQtrCommission DECIMAL(10,2) AFTER bonusAmount;
+
+UPDATE QuarterlyBonuses qb
+JOIN (
+    SELECT empid, YEAR(saleDate) AS year, QUARTER(saleDate) AS quarter, SUM(commission) AS totalQtrCommission
+    FROM Sales
+    GROUP BY empid, YEAR(saleDate), QUARTER(saleDate)
+) s
+ON qb.empid = s.empid AND qb.year = s.year AND qb.quarter = s.quarter
+SET qb.totalQtrCommission = s.totalQtrCommission;
+
+/*Modify the current trigger after_sale_insert*/
+
+USE BeSpokedDB;
+
+DELIMITER //
+
+DROP TRIGGER IF EXISTS after_sale_insert //
+
+CREATE TRIGGER after_sale_insert
+AFTER INSERT ON Sales
+FOR EACH ROW
+BEGIN
+    DECLARE quarter_num INT;
+    DECLARE year_num INT;
+    DECLARE total_sales DECIMAL(10,2);
+    DECLARE bonus_amount DECIMAL(7,2);
+    DECLARE total_commission DECIMAL(10,2);
+
+    SET quarter_num = QUARTER(NEW.saleDate);
+    SET year_num = YEAR(NEW.saleDate);
+
+    SELECT COALESCE(SUM(finalPrice), 0)
+    INTO total_sales
+    FROM Sales
+    WHERE empid = NEW.empid
+    AND YEAR(saleDate) = year_num
+    AND QUARTER(saleDate) = quarter_num;
+
+    SELECT COALESCE(SUM(commission), 0)
+    INTO total_commission
+    FROM Sales
+    WHERE empid = NEW.empid
+    AND YEAR(saleDate) = year_num
+    AND QUARTER(saleDate) = quarter_num;
+
+    SET bonus_amount = total_sales * 0.25;
+
+    INSERT INTO QuarterlyBonuses (empid, year, quarter, totalSales, bonusAmount, totalQtrCommission)
+    VALUES (NEW.empid, year_num, quarter_num, total_sales, bonus_amount, total_commission)
+    ON DUPLICATE KEY UPDATE
+        totalSales = total_sales,
+        bonusAmount = bonus_amount,
+        totalQtrCommission = total_commission;
+END //
+
+DELIMITER ;
+
+/***********************************************************************/
+/***********************************************************************/
+/***********************************************************************/ 
+/*To Prevent duplicate entry of sales employees*\
+
+USE BeSpokedDB;
+ALTER TABLE SalesEmployees
+ADD CONSTRAINT unique_employee UNIQUE (Fname, Lname);
+
+/*To Prevent duplicate entry of products*\
+
+ALTER TABLE Products
+ADD CONSTRAINT unique_product UNIQUE (name, manufacturer);

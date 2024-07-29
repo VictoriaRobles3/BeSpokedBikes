@@ -1,0 +1,92 @@
+/* 
+    dBeaver mySQL insert scripts for BeSpoked Bikes
+    Sample data
+*/
+
+USE BeSpokedDB;
+
+INSERT INTO SalesEmployees (Fname, Lname, address, phone, StartDate, TerminationDate, Manager) VALUES
+('Frodo', 'Baggins', '123 Main St, Anytown, USA', '(404)555-1234', '1999-01-15', NULL, 'Gandalf the Grey'),
+('Sam', 'Gamgee', '456 Oak Ave, Somewhere, USA', '(678)555-5678', '2002-03-01', NULL, 'Gandalf the Grey'),
+('Merry', 'Brandybuck', '789 Pine Rd, Elsewhere, USA', '(770)555-9012', '2012-06-30', NULL, 'Gandalf the Grey'),
+('Peregrin', 'Took', '321 Elm St, Nowhere, USA', '(404)555-3456', '2020-02-28', NULL, 'Gandalf the Grey'),
+('Bilbo', 'Baggins', '654 Maple Dr, Anywhere, USA', '(678)555-7890', '2022-09-22', '2022-05-15', 'Gandalf the Grey');
+
+INSERT INTO Products (name, manufacturer, prodStyle, purchasePrice, salePrice, QtyOnHand, commissionPercentage) VALUES
+('TrailBlazer', 'RockyRidge', 'Mountain', 500.00, 899.99, 10, 5.00),
+('Speedster', 'Velocity', 'Road', 1000.00, 1499.99, 15, 5.00),
+('Hybrid Bike', 'MetroCycle', 'Hybrid', 800.00, 1299.99, 5, 5.00),
+('E Power', 'ElectroRide', 'Electric', 990.00, 1399.99, 20, 5.00),
+('Coastal Classic', 'RetroWheels', 'Cruiser', 550.00, 999.99, 8, 5.00);
+
+INSERT INTO Customers (Fname, Lname, address, phone, StartDate) VALUES
+('Michael', 'Scott', '111 First St, Cityville, USA', '(678)555-1111', '2015-03-10'),
+('Dwight', 'Schrute', '222 Second Ave, Townsburg, USA', '(404)555-2222', '2005-07-22'),
+('Jim', 'Halpert', '333 Third Rd, Villageton, USA', '(678)555-3333', '2002-01-05'),
+('Pam', 'Beesly', '444 Fourth Blvd, Hamletville, USA', '(770)555-4444', '2022-11-30'),
+('Ryan', 'Howard', '555 Fifth Ln, Boroughtown, USA', '(404)555-5555', '2023-05-17');
+
+INSERT INTO Sales (prodid, empid, custid, saleDate, salePrice, discountApplied, finalPrice) VALUES
+(1, 1, 1, '2015-03-10', 899.99, 0.00, 899.99),
+(2, 2, 2, '2005-07-22', 1499.99, 0.00, 1499.99),
+(3, 3, 3, '2002-01-05', 1299.99, 0.00, 1299.99),
+(4, 4, 4, '2023-07-10', 299.99, 0.00, 299.99),
+(5, 1, 5, '2023-05-15', 899.99, 0.00, 899.99);
+
+/***********************************************************************/
+/* Script to test Products table updated script for commissionPercentage and delimiter */
+
+USE BeSpokedDB;
+
+INSERT INTO Products (name, manufacturer, prodStyle, purchasePrice, salePrice, QtyOnHand) VALUES
+('Roadmaster', 'SpeedCycle', 'Road', 800.00, 1299.99, 12);
+
+INSERT INTO Products (name, manufacturer, prodStyle, purchasePrice, salePrice, QtyOnHand) VALUES
+('Mountain Explorer', 'TrailBlaze', 'Mountain', 1000.00, 1389.99, 2);
+
+/***********************************************************************/
+
+/*Transfer current data in Sales Table to QuarterlyBonuses Table testing the delimiter */
+
+INSERT INTO QuarterlyBonuses (empid, year, quarter, totalSales, bonusAmount)
+SELECT 
+    empid, 
+    YEAR(saleDate) as year, 
+    QUARTER(saleDate) as quarter, 
+    SUM(finalPrice) as totalSales,
+    SUM(finalPrice) * 0.25 as bonusAmount
+FROM Sales
+GROUP BY empid, YEAR(saleDate), QUARTER(saleDate)
+ON DUPLICATE KEY UPDATE
+    totalSales = VALUES(totalSales),
+    bonusAmount = VALUES(bonusAmount);
+
+/*Fixed logic of termination date for employee id 5*/
+
+USE BeSpokedDB;
+
+UPDATE SalesEmployees
+SET TerminationDate = '2024-01-01'
+WHERE empid = 5;
+
+/*Fixed logic of Hire date for employee id 3*/
+USE BeSpokedDB;
+
+UPDATE SalesEmployees
+SET StartDate = '2001-03-03'
+WHERE empid = 3;
+
+/*Test delimiter in Sales Table for commission */
+
+INSERT INTO Sales (prodid, empid, custid, saleDate, salePrice, discountApplied, finalPrice) VALUES
+(7, 2, 3, '2003-03-13', 1389.99, 0.00, 1389.99);
+
+INSERT INTO Sales (prodid, empid, custid, saleDate, salePrice, discountApplied, finalPrice) VALUES
+(4, 1, 2, '2015-02-03', 1399.99, 0.00, 1399.99);
+
+/*Delete sale due to price discrepancy, delete same sale from QuarterlyBonuses table*/
+DELETE FROM Sales
+WHERE saleid = 4;
+
+DELETE FROM QuarterlyBonuses
+WHERE bonusid = 4;
