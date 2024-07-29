@@ -97,6 +97,10 @@ public class BeSpokedGUI extends JFrame{
     private void actionButtons(){
         salesEmployeesButton.addActionListener(e -> displaySalesEmployeesWindow());
         customersButton.addActionListener(e -> displayCustomersWindow());
+        productsButton.addActionListener(e -> displayProductsWindow());
+        salesButton.addActionListener(e -> displaySalesWindow());
+        quarterlyReportButton.addActionListener(e -> displayQtrReportWindow());
+
     }
 
     private void displaySalesEmployeesWindow(){
@@ -111,6 +115,33 @@ public class BeSpokedGUI extends JFrame{
     private void displayCustomersWindow(){
         if(connection != null){
             SwingUtilities.invokeLater(() -> new Customers(connection).setVisible(true));
+        }
+        else{
+            JOptionPane.showMessageDialog(this, "Connection is not established.");
+        }
+    }
+
+    private void displayProductsWindow(){
+        if(connection != null){
+            SwingUtilities.invokeLater(() -> new Products(connection).setVisible(true));
+        }
+        else{
+            JOptionPane.showMessageDialog(this, "Connection is not established.");
+        }
+    }
+
+    private void displaySalesWindow(){
+        if(connection != null){
+            SwingUtilities.invokeLater(() -> new Sales(connection).setVisible(true));
+        }
+        else{
+            JOptionPane.showMessageDialog(this, "Connection is not established.");
+        }
+    }
+
+    private void displayQtrReportWindow(){
+        if(connection != null){
+            SwingUtilities.invokeLater(() -> new QuarterlyReport(connection).setVisible(true));
         }
         else{
             JOptionPane.showMessageDialog(this, "Connection is not established.");
