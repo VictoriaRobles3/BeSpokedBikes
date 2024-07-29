@@ -100,6 +100,7 @@ public class BeSpokedGUI extends JFrame{
         productsButton.addActionListener(e -> displayProductsWindow());
         salesButton.addActionListener(e -> displaySalesWindow());
         quarterlyReportButton.addActionListener(e -> displayQtrReportWindow());
+        createAsaleButton.addActionListener(e -> displayMakeSaleWindow());
 
     }
 
@@ -146,6 +147,15 @@ public class BeSpokedGUI extends JFrame{
         else{
             JOptionPane.showMessageDialog(this, "Connection is not established.");
         }
+    }
+
+    private void displayMakeSaleWindow(){
+        if(connection != null){
+            SwingUtilities.invokeLater(() -> new CreateAsale(connection).setVisible(true));
+        }
+        else{
+            JOptionPane.showMessageDialog(this, "Connection is not established.");
+        } 
     }
 
     public static void main(String[] args) throws Exception {
