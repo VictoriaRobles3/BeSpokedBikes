@@ -1,7 +1,6 @@
 import java.sql.*;
 import java.time.*;
-//test get Sales Employees
-//needs modification
+
 public class test {
     private Connection connection;
 
@@ -20,7 +19,6 @@ public class test {
 
             // Establish database connection
             connection = DriverManager.getConnection(url, user, password);
-            //System.out.println("Connected to the database successfully.");
         } catch (ClassNotFoundException e) {
             System.out.println("MySQL JDBC driver not found.");
             e.printStackTrace();
@@ -95,7 +93,6 @@ public class test {
         } catch (SQLException e){
             System.out.println("ERROR: " + e.getLocalizedMessage());
         }
-
     }
 
     private void getProducts(){
@@ -131,7 +128,6 @@ public class test {
         } catch (SQLException e){
             System.out.println("ERROR: " + e.getLocalizedMessage());
         }
-
     }
 
     private void getSales(){
@@ -171,7 +167,6 @@ public class test {
         } catch (SQLException e){
             System.out.println("ERROR: " + e.getLocalizedMessage());
         }
-
     }
 
     private void getQuarterlyReport(){
@@ -209,15 +204,14 @@ public class test {
         } catch (SQLException e){
             System.out.println("ERROR: " + e.getLocalizedMessage());
         }
-
     }
 
     public static void main(String[] args) {
         test ex = new test();
-     //   ex.getSalesEmployees();
-       // ex.getCustomers();
-       // ex.getProducts();
+        ex.getSalesEmployees();
+        ex.getCustomers();
+        ex.getProducts();
         ex.getSales();
-       //ex.getQuarterlyReport();
+        ex.getQuarterlyReport();
     }
 }
