@@ -43,8 +43,8 @@ public class Sales extends JFrame {
             ResultSet myRS = myStmt.executeQuery(sqlCommand)){
                 StringBuilder text = new StringBuilder();
 
-                text.append("\nProduct Name\t\tCustomer Name\tSale Date\tSale Price\tSales Employee\t\tEmployee Commission\n");
-                text.append("------------\t\t-------------\t---------\t----------\t--------------\t\t-------------------\n");
+                text.append("\nProduct Name\t\tCustomer Name\tSale Date\tSale Price\tSales Employee\tEmployee Commission\n");
+                text.append("------------\t-------------\t----------\t--------\t--------------\t------------------\n");
 
                 while (myRS.next()) {
                         String ProductName = myRS.getString("name");
@@ -56,7 +56,7 @@ public class Sales extends JFrame {
                         String customerLastName = myRS.getString("custLname");
                         Double commission = myRS.getDouble("commissionPercentage");
 
-                        text.append(String.format("%-20s\t%-10s\t%-10s\t$%-9.2f\t%-20s\t$%.2f\n",
+                        text.append(String.format("%-20s\t%-20s\t%-10s\t$%-9.2f\t%-20s\t$%.2f\n",
                         ProductName,
                         customerFirstName + " " + customerLastName,
                         saleDate,
