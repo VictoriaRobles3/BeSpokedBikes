@@ -75,6 +75,14 @@ public class CreateAsale extends JFrame {
 
                     // Insert the variables into the parameters of makeSale method
                     makeSale(productId, employeeId, customerId, saleDate, salePrice, discount, finalPrice);
+                    //clear field inputs when makeSale method executes
+                    productIdField.setText("");
+                    employeeIdField.setText("");
+                    customerIdField.setText("");
+                    saleDateField.setText("");
+                    salePriceField.setText("");
+                    discountField.setText("");
+                    finalPriceField.setText("");
 
                     JOptionPane.showMessageDialog(CreateAsale.this, "Purchase made successfully!");
                 } catch (Exception ex) {
