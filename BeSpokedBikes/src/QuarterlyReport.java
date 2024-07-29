@@ -42,7 +42,7 @@ public class QuarterlyReport extends JFrame {
                 StringBuilder text = new StringBuilder();
 
                 text.append("\nSales Employee Name\tYear\tQuarter\tTotal Quarter Sales\t Bonus Amount\tTotal Quarter Commission\n");
-                text.append("--------------------\t-----\t-------\t-------------------\t-------------\t------------------------\n");
+                text.append("--------------------\t-----\t------\t---------------\t------------\t---------------------\n");
 
                 while (myRS.next()) {
                     String empFirstName = myRS.getString("empFname");
@@ -53,7 +53,7 @@ public class QuarterlyReport extends JFrame {
                     Double bonusAmount = myRS.getDouble("bonusAmount");
                     Double qtrCommission = myRS.getDouble("totalQtrCommission");
 
-                    text.append(String.format("%-20s\t%4d\t%2d\t$%-15.2f\t$%8.2f\t$%8.2f\n",
+                    text.append(String.format("%-20s\t%4d\t%2d\t$%-25.2f\t$%-28.2f\t$%-18.2f\n",
                     empFirstName + " " + empLastName,
                     year,
                     quarter,
