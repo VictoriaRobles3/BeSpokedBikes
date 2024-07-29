@@ -265,3 +265,13 @@ DELIMITER ;
 /***********************************************************************/
 /***********************************************************************/
 /***********************************************************************/ 
+/*To Prevent duplicate entry of sales employees*\
+
+USE BeSpokedDB;
+ALTER TABLE SalesEmployees
+ADD CONSTRAINT unique_employee UNIQUE (Fname, Lname);
+
+/*To Prevent duplicate entry of products*\
+
+ALTER TABLE Products
+ADD CONSTRAINT unique_product UNIQUE (name, manufacturer);
